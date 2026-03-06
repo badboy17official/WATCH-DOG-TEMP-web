@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ctOS // SYMPOSIUM NETWORK</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       OVERLAYS
+  ══════════════════════════════════════════ -->
+  <div class="overlay-scanlines" aria-hidden="true"></div>
+  <div class="overlay-grain"     aria-hidden="true"></div>
+  <div class="overlay-vignette"  aria-hidden="true"></div>
+
+  <!-- ══════════════════════════════════════════
+       BACKGROUND CANVAS (network map)
+  ══════════════════════════════════════════ -->
+  <canvas id="networkCanvas" aria-hidden="true"></canvas>
+
+  <!-- ══════════════════════════════════════════
+       BOOT SEQUENCE
+  ══════════════════════════════════════════ -->
+  <div id="bootScreen" role="status" aria-live="polite">
+    <div class="boot-logo">
+      <span class="boot-brand">ctOS</span>
+      <span class="boot-version">v3.0</span>
+    </div>
+    <div class="boot-title">CENTRAL OPERATING SYSTEM</div>
+    <div class="boot-divider"></div>
+    <div id="bootLog" class="boot-log"></div>
+    <div id="bootGranted" class="boot-granted hidden">ACCESS GRANTED</div>
+    <div class="boot-bar-wrap">
+      <div class="boot-bar-label">INITIALIZING <span id="bootPercent">0</span>%</div>
+      <div class="boot-bar-track"><div id="bootBar" class="boot-bar-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       MAIN DASHBOARD
+  ══════════════════════════════════════════ -->
+  <div id="mainApp" class="hidden">
+
+    <!-- TOP BAR -->
+    <header class="topbar" role="banner">
+      <div class="topbar-left">
+        <span class="topbar-logo">ctOS</span>
+        <span class="topbar-sep">|</span>
+        <span class="topbar-title">NETWORK INTERFACE</span>
+      </div>
+      <nav class="topbar-nav" role="navigation" aria-label="Primary navigation">
+        <a href="#home"     class="nav-link active" data-section="home">HOME</a>
+        <a href="#events"   class="nav-link" data-section="events">EVENTS</a>
+        <a href="#schedule" class="nav-link" data-section="schedule">SCHEDULE</a>
+        <a href="#team"     class="nav-link" data-section="team">TEAM</a>
+        <a href="#register" class="nav-link" data-section="register">REGISTER</a>
+      </nav>
+      <div class="topbar-right">
+        <span class="status-dot active-dot"></span>
+        <span class="status-text">NETWORK ACTIVE</span>
+        <span class="topbar-clock" id="topbarClock">00:00:00</span>
+      </div>
+      <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </header>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu hidden" id="mobileMenu">
+      <a href="#home"     class="mob-link" data-section="home">HOME</a>
+      <a href="#events"   class="mob-link" data-section="events">EVENTS</a>
+      <a href="#schedule" class="mob-link" data-section="schedule">SCHEDULE</a>
+      <a href="#team"     class="mob-link" data-section="team">TEAM</a>
+      <a href="#register" class="mob-link" data-section="register">REGISTER</a>
+    </div>
+
+    <!-- PAGE CONTENT -->
+    <main class="content-area" id="contentArea">
+
+      <!-- ─── HOME ─── -->
+      <section id="home" class="page active-page">
+        <div class="page-grid">
+
+          <!-- Hero panel -->
+          <div class="hero-panel ctos-panel col-span-full">
+            <div class="panel-header">
+              <span class="panel-tag">SYS // WELCOME</span>
+              <span class="panel-status blink-text">● LIVE</span>
+            </div>
+            <div class="hero-inner">
+              <h1 class="hero-title glitch-text" data-text="SYMPOSIUM 2026">SYMPOSIUM 2026</h1>
+              <p class="hero-sub">CITY INFRASTRUCTURE RESEARCH CONFERENCE</p>
+              <div class="hero-meta">
+                <span class="meta-item"><span class="meta-label">DATE</span> 15–17 OCT 2026</span>
+                <span class="meta-sep">|</span>
+                <span class="meta-item"><span class="meta-label">LOCATION</span> SECTOR 7 — CHICAGO</span>
+                <span class="meta-sep">|</span>
+                <span class="meta-item"><span class="meta-label">ACCESS</span> TIER-2 CLEARANCE</span>
+              </div>
+              <a href="#register" class="ctos-btn" data-section="register">REQUEST ACCESS</a>
+            </div>
+          </div>
+
+          <!-- System log -->
+          <div class="ctos-panel syslog-panel col-span-2">
+            <div class="panel-header">
+              <span class="panel-tag">SYS // ACTIVITY LOG</span>
+              <span class="panel-corner">▣</span>
+            </div>
+            <div id="syslog" class="syslog-body" aria-live="polite" aria-label="System log"></div>
+          </div>
+
+          <!-- Stats -->
+          <div class="ctos-panel stats-panel col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">SYS // NETWORK STATS</span>
+            </div>
+            <div class="stats-grid">
+              <div class="stat-block">
+                <div class="stat-value counter" data-target="48">0</div>
+                <div class="stat-label">SPEAKERS</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-value counter" data-target="1200">0</div>
+                <div class="stat-label">ATTENDEES</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-value counter" data-target="32">0</div>
+                <div class="stat-label">SESSIONS</div>
+              </div>
+              <div class="stat-block">
+                <div class="stat-value counter" data-target="3">0</div>
+                <div class="stat-label">DAYS</div>
+              </div>
+            </div>
+            <div class="signal-bars">
+              <div class="signal-label">SIGNAL STRENGTH</div>
+              <div class="bars">
+                <span class="bar active"></span><span class="bar active"></span>
+                <span class="bar active"></span><span class="bar active"></span>
+                <span class="bar"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alert ticker -->
+          <div class="ctos-panel ticker-panel col-span-full">
+            <div class="panel-header">
+              <span class="panel-tag">SYS // BROADCAST</span>
+            </div>
+            <div class="ticker-track">
+              <div class="ticker-content" id="ticker">
+                &nbsp;&nbsp;&nbsp;▶ EARLY BIRD REGISTRATION CLOSES 01 AUG 2026 &nbsp;&nbsp;|&nbsp;&nbsp;
+                ▶ KEYNOTE SPEAKER CONFIRMED — DR. CLARA HAYES &nbsp;&nbsp;|&nbsp;&nbsp;
+                ▶ NODE-7 WORKSHOP: NETWORK INTRUSION DETECTION &nbsp;&nbsp;|&nbsp;&nbsp;
+                ▶ SYMPOSIUM ACCESS CODES DISTRIBUTED VIA SECURE CHANNEL &nbsp;&nbsp;|&nbsp;&nbsp;
+                ▶ INFRASTRUCTURE PANEL NOW ACCEPTING ABSTRACTS &nbsp;&nbsp;|&nbsp;&nbsp;
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── EVENTS ─── -->
+      <section id="events" class="page">
+        <div class="page-grid">
+
+          <div class="section-header col-span-full">
+            <span class="section-tag">// EVENTS &amp; TRACKS</span>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="ctos-panel event-card col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">TRACK-01</span>
+              <span class="event-id">#EVT-001</span>
+            </div>
+            <div class="event-icon">◈</div>
+            <h3 class="event-title">NETWORK SECURITY SUMMIT</h3>
+            <p class="event-desc">Deep-dive sessions on infrastructure protection, zero-day analysis and city-wide network hardening.</p>
+            <div class="event-meta">
+              <span><span class="meta-label">DATE</span> 15 OCT</span>
+              <span><span class="meta-label">ROOM</span> NODE-A</span>
+            </div>
+            <div class="event-tags">
+              <span class="tag">SECURITY</span><span class="tag">INFRA</span>
+            </div>
+            <div class="event-bar"><div class="event-fill" style="width:82%"></div></div>
+            <div class="event-cap">82% CAPACITY</div>
+          </div>
+
+          <div class="ctos-panel event-card col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">TRACK-02</span>
+              <span class="event-id">#EVT-002</span>
+            </div>
+            <div class="event-icon">◇</div>
+            <h3 class="event-title">SURVEILLANCE SYSTEMS WORKSHOP</h3>
+            <p class="event-desc">Hands-on labs exploring camera mesh networks, facial recognition pipelines and real-time data aggregation.</p>
+            <div class="event-meta">
+              <span><span class="meta-label">DATE</span> 15 OCT</span>
+              <span><span class="meta-label">ROOM</span> NODE-B</span>
+            </div>
+            <div class="event-tags">
+              <span class="tag">VISION</span><span class="tag">ML</span>
+            </div>
+            <div class="event-bar"><div class="event-fill" style="width:65%"></div></div>
+            <div class="event-cap">65% CAPACITY</div>
+          </div>
+
+          <div class="ctos-panel event-card col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">TRACK-03</span>
+              <span class="event-id">#EVT-003</span>
+            </div>
+            <div class="event-icon">◆</div>
+            <h3 class="event-title">URBAN DATA GRID FORUM</h3>
+            <p class="event-desc">Exploring smart-city data flows, sensor fusion and distributed infrastructure intelligence.</p>
+            <div class="event-meta">
+              <span><span class="meta-label">DATE</span> 16 OCT</span>
+              <span><span class="meta-label">ROOM</span> NODE-C</span>
+            </div>
+            <div class="event-tags">
+              <span class="tag">DATA</span><span class="tag">URBAN</span>
+            </div>
+            <div class="event-bar"><div class="event-fill" style="width:91%"></div></div>
+            <div class="event-cap">91% CAPACITY — CRITICAL</div>
+          </div>
+
+          <div class="ctos-panel event-card col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">TRACK-04</span>
+              <span class="event-id">#EVT-004</span>
+            </div>
+            <div class="event-icon">▣</div>
+            <h3 class="event-title">EXPLOIT ANALYSIS LAB</h3>
+            <p class="event-desc">Live reverse-engineering, vulnerability disclosure and coordinated patching exercises on isolated nodes.</p>
+            <div class="event-meta">
+              <span><span class="meta-label">DATE</span> 16 OCT</span>
+              <span><span class="meta-label">ROOM</span> NODE-D</span>
+            </div>
+            <div class="event-tags">
+              <span class="tag">EXPLOIT</span><span class="tag">RESEARCH</span>
+            </div>
+            <div class="event-bar"><div class="event-fill" style="width:50%"></div></div>
+            <div class="event-cap">50% CAPACITY</div>
+          </div>
+
+          <div class="ctos-panel event-card col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">TRACK-05</span>
+              <span class="event-id">#EVT-005</span>
+            </div>
+            <div class="event-icon">▷</div>
+            <h3 class="event-title">KEYNOTE: CONNECTED CITIES</h3>
+            <p class="event-desc">Opening keynote examining the civil liberties, ethics and policy surrounding total-network urban integration.</p>
+            <div class="event-meta">
+              <span><span class="meta-label">DATE</span> 17 OCT</span>
+              <span><span class="meta-label">ROOM</span> MAIN HALL</span>
+            </div>
+            <div class="event-tags">
+              <span class="tag">KEYNOTE</span><span class="tag">POLICY</span>
+            </div>
+            <div class="event-bar"><div class="event-fill" style="width:99%"></div></div>
+            <div class="event-cap">99% CAPACITY — FULL</div>
+          </div>
+
+          <div class="ctos-panel event-card col-span-1">
+            <div class="panel-header">
+              <span class="panel-tag">TRACK-06</span>
+              <span class="event-id">#EVT-006</span>
+            </div>
+            <div class="event-icon">◉</div>
+            <h3 class="event-title">CTRLR PROTOCOL DEMO</h3>
+            <p class="event-desc">Live demonstration of city-controller override scenarios, traffic-grid manipulation and power-grid isolation.</p>
+            <div class="event-meta">
+              <span><span class="meta-label">DATE</span> 17 OCT</span>
+              <span><span class="meta-label">ROOM</span> NODE-E</span>
+            </div>
+            <div class="event-tags">
+              <span class="tag">DEMO</span><span class="tag">LIVE</span>
+            </div>
+            <div class="event-bar"><div class="event-fill" style="width:74%"></div></div>
+            <div class="event-cap">74% CAPACITY</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── SCHEDULE ─── -->
+      <section id="schedule" class="page">
+        <div class="page-grid">
+
+          <div class="section-header col-span-full">
+            <span class="section-tag">// OPERATIONAL SCHEDULE</span>
+            <div class="section-line"></div>
+          </div>
+
+          <!-- Day tabs -->
+          <div class="day-tabs col-span-full">
+            <button class="day-tab active" data-day="1">DAY 01 // 15 OCT</button>
+            <button class="day-tab" data-day="2">DAY 02 // 16 OCT</button>
+            <button class="day-tab" data-day="3">DAY 03 // 17 OCT</button>
+          </div>
+
+          <div class="ctos-panel timeline-panel col-span-full" id="timelinePanel">
+            <!-- injected by JS -->
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── TEAM ─── -->
+      <section id="team" class="page">
+        <div class="page-grid">
+
+          <div class="section-header col-span-full">
+            <span class="section-tag">// OPERATIVE ROSTER</span>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="ctos-panel operative-card col-span-1" data-clearance="ALPHA">
+            <div class="panel-header">
+              <span class="panel-tag">OPERATIVE-01</span>
+              <span class="clearance-badge">ALPHA</span>
+            </div>
+            <div class="op-avatar">
+              <div class="av-hex">
+                <span class="av-initials">CH</span>
+              </div>
+              <div class="av-scan-line"></div>
+            </div>
+            <h3 class="op-name">DR. CLARA HAYES</h3>
+            <p class="op-role">// LEAD RESEARCHER</p>
+            <div class="op-skills">
+              <div class="skill-row"><span class="skill-name">NETWORK ANALYSIS</span><div class="skill-bar"><div class="skill-fill" style="width:95%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">EXPLOITATION</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">CRYPTOGRAPHY</span><div class="skill-bar"><div class="skill-fill" style="width:80%"></div></div></div>
+            </div>
+            <div class="op-status"><span class="status-dot active-dot"></span> ONLINE</div>
+          </div>
+
+          <div class="ctos-panel operative-card col-span-1" data-clearance="BETA">
+            <div class="panel-header">
+              <span class="panel-tag">OPERATIVE-02</span>
+              <span class="clearance-badge">BETA</span>
+            </div>
+            <div class="op-avatar">
+              <div class="av-hex">
+                <span class="av-initials">MR</span>
+              </div>
+              <div class="av-scan-line"></div>
+            </div>
+            <h3 class="op-name">MARCUS REYES</h3>
+            <p class="op-role">// SYSTEMS ARCHITECT</p>
+            <div class="op-skills">
+              <div class="skill-row"><span class="skill-name">INFRA DESIGN</span><div class="skill-bar"><div class="skill-fill" style="width:92%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">PACKET ANALYSIS</span><div class="skill-bar"><div class="skill-fill" style="width:78%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">SOCIAL ENG.</span><div class="skill-bar"><div class="skill-fill" style="width:65%"></div></div></div>
+            </div>
+            <div class="op-status"><span class="status-dot active-dot"></span> ONLINE</div>
+          </div>
+
+          <div class="ctos-panel operative-card col-span-1" data-clearance="BETA">
+            <div class="panel-header">
+              <span class="panel-tag">OPERATIVE-03</span>
+              <span class="clearance-badge">BETA</span>
+            </div>
+            <div class="op-avatar">
+              <div class="av-hex">
+                <span class="av-initials">SK</span>
+              </div>
+              <div class="av-scan-line"></div>
+            </div>
+            <h3 class="op-name">SARA KWAN</h3>
+            <p class="op-role">// DATA ANALYST</p>
+            <div class="op-skills">
+              <div class="skill-row"><span class="skill-name">DATA MINING</span><div class="skill-bar"><div class="skill-fill" style="width:97%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">PATTERN RECOG.</span><div class="skill-bar"><div class="skill-fill" style="width:85%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">STEALTH OPS</span><div class="skill-bar"><div class="skill-fill" style="width:72%"></div></div></div>
+            </div>
+            <div class="op-status"><span class="status-dot active-dot"></span> ONLINE</div>
+          </div>
+
+          <div class="ctos-panel operative-card col-span-1" data-clearance="GAMMA">
+            <div class="panel-header">
+              <span class="panel-tag">OPERATIVE-04</span>
+              <span class="clearance-badge gamma">GAMMA</span>
+            </div>
+            <div class="op-avatar">
+              <div class="av-hex">
+                <span class="av-initials">TN</span>
+              </div>
+              <div class="av-scan-line"></div>
+            </div>
+            <h3 class="op-name">THEO NAKAMURA</h3>
+            <p class="op-role">// FIELD COORDINATOR</p>
+            <div class="op-skills">
+              <div class="skill-row"><span class="skill-name">LOGISTICS</span><div class="skill-bar"><div class="skill-fill" style="width:90%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">COMMS</span><div class="skill-bar"><div class="skill-fill" style="width:83%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">HARDWARE</span><div class="skill-bar"><div class="skill-fill" style="width:70%"></div></div></div>
+            </div>
+            <div class="op-status"><span class="status-dot idle-dot"></span> STANDBY</div>
+          </div>
+
+          <div class="ctos-panel operative-card col-span-1" data-clearance="GAMMA">
+            <div class="panel-header">
+              <span class="panel-tag">OPERATIVE-05</span>
+              <span class="clearance-badge gamma">GAMMA</span>
+            </div>
+            <div class="op-avatar">
+              <div class="av-hex">
+                <span class="av-initials">LP</span>
+              </div>
+              <div class="av-scan-line"></div>
+            </div>
+            <h3 class="op-name">LEILA PAYNE</h3>
+            <p class="op-role">// COMMS SPECIALIST</p>
+            <div class="op-skills">
+              <div class="skill-row"><span class="skill-name">RF INTERCEPT</span><div class="skill-bar"><div class="skill-fill" style="width:88%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">ENCRYPTION</span><div class="skill-bar"><div class="skill-fill" style="width:91%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">SIGNAL INTEL</span><div class="skill-bar"><div class="skill-fill" style="width:79%"></div></div></div>
+            </div>
+            <div class="op-status"><span class="status-dot active-dot"></span> ONLINE</div>
+          </div>
+
+          <div class="ctos-panel operative-card col-span-1" data-clearance="DELTA">
+            <div class="panel-header">
+              <span class="panel-tag">OPERATIVE-06</span>
+              <span class="clearance-badge delta">DELTA</span>
+            </div>
+            <div class="op-avatar">
+              <div class="av-hex">
+                <span class="av-initials">JD</span>
+              </div>
+              <div class="av-scan-line"></div>
+            </div>
+            <h3 class="op-name">JAMES DONOVAN</h3>
+            <p class="op-role">// SECURITY AUDITOR</p>
+            <div class="op-skills">
+              <div class="skill-row"><span class="skill-name">PEN TESTING</span><div class="skill-bar"><div class="skill-fill" style="width:99%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">FORENSICS</span><div class="skill-bar"><div class="skill-fill" style="width:93%"></div></div></div>
+              <div class="skill-row"><span class="skill-name">OSINT</span><div class="skill-bar"><div class="skill-fill" style="width:86%"></div></div></div>
+            </div>
+            <div class="op-status"><span class="status-dot idle-dot"></span> STANDBY</div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ─── REGISTER ─── -->
+      <section id="register" class="page">
+        <div class="page-grid">
+
+          <div class="section-header col-span-full">
+            <span class="section-tag">// ACCESS REQUEST TERMINAL</span>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="ctos-panel reg-panel col-span-2">
+            <div class="panel-header">
+              <span class="panel-tag">SYS // CREDENTIAL SUBMISSION</span>
+              <span class="panel-status blink-text">● AWAITING INPUT</span>
+            </div>
+
+            <div class="terminal-prompt-area" id="termPrompt">
+              <p class="term-line">ctOS REGISTRATION TERMINAL v3.0</p>
+              <p class="term-line">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</p>
+              <p class="term-line">ENTER CREDENTIALS TO REQUEST ACCESS</p>
+              <p class="term-line">&nbsp;</p>
+            </div>
+
+            <form id="regForm" class="reg-form" novalidate>
+              <div class="form-row">
+                <div class="form-field">
+                  <label class="field-label" for="fname">&gt; FIRST NAME</label>
+                  <input id="fname" type="text" class="ctos-input" placeholder="..." autocomplete="given-name" required />
+                </div>
+                <div class="form-field">
+                  <label class="field-label" for="lname">&gt; LAST NAME</label>
+                  <input id="lname" type="text" class="ctos-input" placeholder="..." autocomplete="family-name" required />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field">
+                  <label class="field-label" for="email">&gt; EMAIL ADDRESS</label>
+                  <input id="email" type="email" class="ctos-input" placeholder="user@network.sys" autocomplete="email" required />
+                </div>
+                <div class="form-field">
+                  <label class="field-label" for="org">&gt; ORGANISATION</label>
+                  <input id="org" type="text" class="ctos-input" placeholder="..." autocomplete="organization" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field full-width">
+                  <label class="field-label" for="access">&gt; ACCESS TIER REQUEST</label>
+                  <select id="access" class="ctos-select" required>
+                    <option value="" disabled selected>SELECT TIER</option>
+                    <option value="observer">OBSERVER — GENERAL SESSIONS</option>
+                    <option value="analyst">ANALYST — ALL TRACKS + LABS</option>
+                    <option value="operator">OPERATOR — FULL ACCESS + DEMOS</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-field full-width">
+                  <label class="field-label" for="interests">&gt; RESEARCH INTERESTS</label>
+                  <textarea id="interests" class="ctos-textarea" rows="4" placeholder="describe your focus areas..."></textarea>
+                </div>
+              </div>
+              <div class="form-check">
+                <label class="check-label">
+                  <input type="checkbox" id="agree" required />
+                  <span class="check-box"></span>
+                  I ACKNOWLEDGE THIS TRANSMISSION MAY BE MONITORED BY ctOS
+                </label>
+              </div>
+              <div id="regFormMsg" class="form-msg hidden"></div>
+              <button type="submit" class="ctos-btn submit-btn">
+                <span class="btn-icon">▶</span> TRANSMIT CREDENTIALS
+              </button>
+            </form>
+          </div>
+
+          <!-- sidebar info -->
+          <div class="reg-sidebar col-span-1">
+            <div class="ctos-panel reg-info-panel">
+              <div class="panel-header"><span class="panel-tag">SYS // ACCESS TIERS</span></div>
+              <div class="tier-list">
+                <div class="tier-item">
+                  <div class="tier-name">OBSERVER</div>
+                  <div class="tier-desc">General keynotes and panel sessions. Public network access.</div>
+                  <div class="tier-price">FREE</div>
+                </div>
+                <div class="tier-item highlight-tier">
+                  <div class="tier-name">ANALYST</div>
+                  <div class="tier-desc">All tracks, workshop labs and post-session recordings.</div>
+                  <div class="tier-price">$299</div>
+                </div>
+                <div class="tier-item">
+                  <div class="tier-name">OPERATOR</div>
+                  <div class="tier-desc">Full access, live demos, private briefings and ctOS sandbox.</div>
+                  <div class="tier-price">$599</div>
+                </div>
+              </div>
+            </div>
+            <div class="ctos-panel reg-note-panel">
+              <div class="panel-header"><span class="panel-tag">SYS // NOTICE</span></div>
+              <p class="note-text">All attendees are subject to identity verification. Credentials submitted via this terminal are encrypted using ctOS secure-channel protocol. Confirmation codes will be transmitted to registered email within 48 hours.</p>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span class="footer-brand">ctOS // SYMPOSIUM 2026</span>
+        <span class="footer-sep">|</span>
+        <span class="footer-copy">ALL RIGHTS RESERVED. NETWORK MONITORED.</span>
+        <span class="footer-coord" id="footerCoord">41.8781° N, 87.6298° W</span>
+      </div>
+    </footer>
+
+  </div><!-- /mainApp -->
+
+  <script src="script.js"></script>
+</body>
+</html>
