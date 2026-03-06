@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════
-   ctOS SYMPOSIUM — JAVASCRIPT
+   ctOS CTF — JAVASCRIPT
    Watch Dogs 1 surveillance-console aesthetic
    ═══════════════════════════════════════════════════ */
 
@@ -313,7 +313,7 @@ const SysLog = (() => {
     { msg: '> geo-fence boundary active',             cls: 'log-cyan' },
     { msg: '> WARNING: unrecognised MAC address',     cls: 'log-warn' },
     { msg: '> scanning perimeter — clear',            cls: '' },
-    { msg: '> symposium node provisioned',            cls: 'log-white' },
+    { msg: '> ctf node provisioned',                  cls: 'log-white' },
     { msg: '> traffic re-route via NODE-7',           cls: '' },
     { msg: '> signal strength: 4/5 bars',             cls: '' },
     { msg: '> access log updated',                    cls: 'log-cyan' },
@@ -412,7 +412,7 @@ const scheduleData = {
     { time: '14:00', title: 'WORKSHOP: ctOS SANDBOX EXPLORATION',      room: 'SANDBOX',  badge: '',      speaker: 'J. DONOVAN' },
     { time: '14:00', title: 'ROUNDTABLE: FUTURE OF URBAN SURVEILLANCE',room: 'NODE-C',   badge: 'PANEL', speaker: 'L. PAYNE', highlight: false },
     { time: '16:00', title: 'AWARDS & CLOSING TRANSMISSION',           room: 'MAIN HALL',badge: 'KEY',   speaker: 'ALL OPERATIVES', highlight: true },
-    { time: '17:30', title: '[ NETWORK SHUTDOWN — SYMPOSIUM COMPLETE ]',room: '—',       badge: '',      speaker: '' },
+    { time: '17:30', title: '[ NETWORK SHUTDOWN — CTF COMPLETE ]',room: '—',       badge: '',      speaker: '' },
   ],
 };
 
